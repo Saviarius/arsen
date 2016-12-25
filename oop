@@ -1,0 +1,447 @@
+#include <cstdlib>
+#include <iostream>
+#include <fstream>
+
+using namespace std;
+
+class Student {
+    string lastName;
+    string group;
+    int score;
+public:
+
+    virtual void info() {
+        cout << this->GetLastName() << endl;
+    }
+
+    friend std::ostream& operator<<(std::ostream& os, const Student& obj) {
+        os << obj.GetLastName() << " : " << obj.GetGroup() << " : " << obj.GetScore() << endl;
+        return os;
+    }
+
+    friend std::istream& operator>>(std::istream& is, Student& obj) {
+        is >> obj.lastName;
+        is >> obj.group;
+        is >> obj.score;
+        return is;
+    }
+
+    Student() {
+    }
+
+    Student(int score, string group, string lastName) :
+    score(score), group(group), lastName(lastName) {
+    }
+
+    Student& operator=(const Student& right) {
+        // Check for self-assignment!
+        if (this == &right) // Same object?
+            return *this; // Yes, so skip assignment, and just return *this.
+        this->SetScore(right.GetScore());
+        this->SetGroup(right.GetGroup());
+        this->SetLastName(right.GetLastName());
+        return *this;
+    }
+
+    ~Student() {
+        //Student`s destructor
+    }
+
+    int GetScore() const {
+        return score;
+    }
+
+    void SetScore(int score) {
+        this->score = score;
+    }
+
+    string GetGroup() const {
+        return group;
+    }
+
+    void SetGroup(string group) {
+        this->group = group;
+    }
+
+    string GetLastName() const {
+        return lastName;
+    }
+
+    void SetLastName(string lastName) {
+        this->lastName = lastName;
+    }
+
+    void operator()(int score) {
+        this->score = score;
+    }
+};
+
+class Teacher : public Student {
+    string lastName;
+    string initials;
+    string position;
+public:
+
+    virtual void info() {
+        cout << GetLastName() << endl;
+    }
+
+    Teacher& operator=(const Teacher& right) {
+        // Check for self-assignment!
+        if (this == &right) // Same object?
+            return *this; // Yes, so skip assignment, and just return *this.
+        this->lastName = lastName;
+        this->initials = initials;
+        this->position = position;
+        return *this;
+    }
+
+    friend std::ostream& operator<<(std::ostream& os, const Teacher& obj) {
+        os << obj.GetLastName() << " : " << obj.GetInitials() << " : " << obj.GetPosition() << endl;
+        return os;
+    }
+
+    friend std::istream& operator>>(std::istream& is, Teacher& obj) {
+        is >> obj.lastName;
+        is >> obj.initials;
+        is >> obj.position;
+        return is;
+    }
+
+    Teacher(string lastName, string initials, string position) :
+    initials(initials), lastName(lastName), position(position) {
+        this->lastName = lastName;
+        this->initials = initials;
+        this->position = position;
+    }
+
+    ~Teacher() {
+        //Teacher`s destructor
+    }
+
+    string GetInitials() const {
+        return initials;
+    }
+
+    void SetInitials(string initials) {
+        this->initials = initials;
+    }
+
+    string GetLastName() const {
+        return lastName;
+    }
+
+    void SetLastName(string lastName) {
+        this->lastName = lastName;
+    }
+
+    string GetPosition() const {
+        return position;
+    }
+
+    void SetPosition(string position) {
+        this->position = position;
+    }
+
+    void operator()(string position) {
+        this->position = position;
+    }
+};
+
+enum SortOfLesson {
+    LAB, PRACTICE, LECTURE
+};
+
+class Lesson : public Student {
+    string name;
+    SortOfLesson sort;
+    string date;
+    string time;
+    string place;
+public:
+
+    Lesson() {
+    }
+
+    Lesson(string name, SortOfLesson sort, string date, string time, string place) :
+    Student(), date(date), name(name), place(place), sort(sort), time(time) {
+        this->name = name;
+        this->sort = sort;
+        this->date = date;
+        this->time = time;
+        this->place = place;
+
+    }
+
+    string getDate() const {
+        return date;
+    }
+
+    void setDate(string date) {
+        this->date = date;
+    }
+
+    string getPlace() const {
+        return place;
+    }
+
+    void setPlace(string place) {
+        this->place = place;
+    }
+
+    SortOfLesson getSort() const {
+        return sort;
+    }
+
+    void setSort(SortOfLesson sort) {
+        this->sort = sort;
+    }
+
+    string getTime() const {
+        return time;
+    }
+
+    void setTime(string time) {
+        this->time = time;
+    }
+
+    string getName() const {
+        return name;
+    }
+
+    void setName(string name) {
+        this->name = name;
+    }
+
+    virtual void info() {
+        cout << getName() << endl;
+    }
+
+    friend std::ostream& operator<<(std::ostream& os, const Lesson& obj) {
+        os << obj.name << " : " << obj.sort << " : " << obj.date << " : "
+                << obj.time << " : " << obj.place << endl;
+        return os;
+    }
+
+    Lesson& operator=(const Lesson& right) {
+        // Check for self-assignment!
+        if (this == &right) // Same object?
+            return *this; // Yes, so skip assignment, and just return *this.
+        this->name = right.getName();
+        this->sort = right.getSort();
+        this->date = right.getDate();
+        this->time = right.getTime();
+        this->place = right.getPlace();
+        return *this;
+    }
+
+};
+
+class Schedule {
+    Lesson *arr;
+    int size;
+    int capacity;
+
+    void ensureCapacity() {
+        if (size == capacity - 1) {
+            Lesson *tmp = new Lesson[capacity];
+            for (int i = 0; i < size; i++) {
+                tmp[i] = arr[i];
+            }
+            delete arr;
+            capacity = capacity * 3 / 2 + 2;
+            arr = new Lesson[capacity];
+
+            for (int i = 0; i < size; i++) {
+                arr[i] = tmp[i];
+            }
+            delete tmp;
+
+        }
+    }
+public:
+
+    Schedule() {
+        capacity = 16;
+        size = 0;
+        arr = new Lesson[capacity];
+    }
+
+    void add(Lesson l) {
+        ensureCapacity();
+        arr[size] = l;
+        size++;
+    }
+
+    void saveToTxt() {
+        ofstream fout("D:\\schedule.txt");
+        for (int i = 0; i < size; i++) {
+            fout << arr[i].getName() << " : " << arr[i].getSort() << " : ";
+            fout << arr[i].getDate() << " : " << arr[i].getTime() << " : ";
+            fout << arr[i].getPlace() << endl;
+        }
+        fout.close();
+
+    }
+
+    friend std::ostream& operator<<(std::ostream& os, const Schedule& obj) {
+        for (int i = 0; i < obj.size; i++) {
+            os << obj.arr[i];
+
+        }
+
+        return os;
+    }
+
+};
+
+class MyArray {
+    Lesson* arr;
+    int _n;
+public:
+    class Iterator;
+
+    MyArray(int n = 1) : _n(n) {
+        arr = new Lesson[n];
+    }
+
+    Lesson& operator[](const int& n) {
+        if (n > 0 && n < _n)
+            return arr[n];
+        return arr[0];
+    }
+
+    Iterator begin() {
+        return arr;
+    }
+
+    Iterator end() {
+        return arr + _n;
+    }
+
+    class Iterator {
+        Lesson* cur;
+    public:
+
+        Iterator(Lesson* first) : cur(first) {
+        }
+
+        Lesson& operator+(int n) {
+            return *(cur + n);
+        }
+
+        Lesson& operator-(int n) {
+            return *(cur - n);
+        }
+
+        Lesson& operator++(int) {
+            return *cur++;
+        }
+
+        Lesson& operator--(int) {
+            return *cur--;
+        }
+
+        Lesson& operator++() {
+            return *++cur;
+        }
+
+        Lesson& operator--() {
+            return *--cur;
+        }
+
+        bool operator!=(const Iterator& it) {
+            return cur != it.cur;
+        }
+
+        bool operator==(const Iterator& it) {
+            return cur == it.cur;
+        }
+
+        Lesson& operator*() {
+            return *cur;
+        }
+
+        friend std::ostream& operator<<(std::ostream& os, const Iterator& obj) {
+            os << obj.cur << endl;
+            return os;
+        }
+
+    };
+
+};
+
+void studentTest() {
+    Student *s = new Student(94, "SA-21", "Lozovyk");
+    Student *s1 = s;
+    cout << *s;
+    cin>>*s;
+    cout << *s;
+    (*s)(25);
+    cout << *s;
+}
+
+void teacherTest() {
+    Teacher *t = new Teacher("Boyko", "N.I.", "Ph.D");
+    Teacher *t1 = t;
+    cout << *t;
+    cin>>*t;
+    cout << *t;
+    (*t)("25");
+    cout << *t;
+}
+
+void polymorphTest() {
+    Student *s = new Student(100, "Sa-22", "Sever");
+    Student *t = new Teacher("Boyko", "N.I.", "Ph.D");
+    Student *l = new Lesson("Math", LAB, "20.05.2016", "8:30", "NU LP");
+    (*s).info();
+    (*t).info();
+    (*l).info();
+}
+
+void scheduleTest() {
+    Lesson *l1 = new Lesson("Math", LAB, "20.05.2016", "8:30", "NU LP");
+    Lesson *l2 = new Lesson("OOP", PRACTICE, "21.05.2016", "8:30", "NU LP");
+    Lesson *l3 = new Lesson("Programming", LECTURE, "22.05.2016", "8:30", "NU LP");
+
+    Schedule *s = new Schedule();
+    s->add(*l1);
+    s->add(*l2);
+    s->add(*l3);
+    cout << *s;
+    s->saveToTxt();
+}
+
+void iteratorTest() {
+    MyArray arr(3);
+
+    Lesson *l1 = new Lesson("Math", LAB, "20.05.2016", "8:30", "NU LP");
+    Lesson *l2 = new Lesson("OOP", PRACTICE, "21.05.2016", "8:30", "NU LP");
+    Lesson *l3 = new Lesson("Programming", LECTURE, "22.05.2016", "8:30", "NU LP");
+
+
+    arr[0] = *l1;
+    arr[1] = *l2;
+    arr[2] = *l3;
+
+
+    MyArray::Iterator it = MyArray::Iterator(arr.begin());
+
+    cout << "2: " << it + 2 << endl;
+
+    while (it != arr.end()) {
+        cout << *it;
+        it++;
+    }
+}
+
+int main(int argc, char** argv) {
+//    studentTest();
+//    teacherTest();
+//    polymorphTest();
+//    scheduleTest();
+//    iteratorTest();
+
+    return 0;
+}
