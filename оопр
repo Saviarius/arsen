@@ -1,0 +1,96 @@
+#include<iostream>
+#include <cstdlib>
+#include <fstream>
+#include <conio.h>
+
+using namespace std;
+
+class Student {              
+public:
+
+	string numberOfGroop; 
+	string SurnameS;
+	 Student() {
+    }
+
+    Student( string numberOfGroop, string SurnameS) :
+  numberOfGroop(numberOfGroop), SurnameS(SurnameS) {
+    }
+
+	
+	friend std::ostream& operator<<(std::ostream& os, const Student& obj) {
+        os << obj.Get_SurnameS() << " : " << obj.Get_numberOfGroop() << endl;
+        return os;
+    }
+	 friend std::istream& operator>>(std::istream& is, Student& obj) {
+        is >> obj.SurnameS;
+        is >> obj.numberOfGroop;
+        return is;
+    }
+	  Student& operator=(const Student& p) {
+        if (this == &p) {
+			return *this; }
+       
+        this->Set_numberOfGroop(p.Get_numberOfGroop());
+        this->Set_SurnameS(p.Get_SurnameS());
+        return *this;
+    }
+
+	string Get_SurnameS() const {
+        return SurnameS;
+    }
+	string Get_numberOfGroop() const {
+        return numberOfGroop;
+    }
+	 void Set_SurnameS(string SurnameS) {
+        this->SurnameS = SurnameS;
+    }
+	  void Set_numberOfGroop(string numberOfGroop) {
+        this->numberOfGroop = numberOfGroop;
+    }
+	  	virtual void NAME(){
+	cout<<this->Get_SurnameS()<<endl;
+	}
+	~Student();
+
+};
+
+
+Student::~Student(){
+
+cout<<"Destruktor has been worked"<<endl;
+
+}
+
+
+
+
+class Lecturer {
+                          
+public:
+	string Position[10]; 
+	string SurnameL[50];
+	Lecturer();
+	~Lecturer();
+	         
+
+};
+ 
+
+
+Lecturer::~Lecturer(){
+
+cout<<"Destruktor has been worked"<<endl;
+
+}
+
+
+int  main()
+{ Student obj1, obj2,obj3;      
+Lecturer ob1;
+obj3 = obj1;
+
+_getch();
+
+return 0;
+}
