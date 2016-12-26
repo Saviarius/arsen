@@ -1,0 +1,336 @@
+#include<iostream>
+#include <cstdlib>
+#include <fstream>
+#include <conio.h>
+#include <string>
+using namespace std;
+
+class Student {              
+public:
+
+	string numberOfGroop; 
+	string SurnameS;
+	 Student() {}
+    Student( string numberOfGroop, string SurnameS) :
+  numberOfGroop(numberOfGroop), SurnameS(SurnameS) {
+    }
+
+	
+	friend std::ostream& operator<<(std::ostream& os, const Student& obj) {
+        os << obj.Get_SurnameS() << " : " << obj.Get_numberOfGroop() << endl;
+        return os;
+    }
+	 friend std::istream& operator>>(std::istream& is, Student& obj) {
+        is >> obj.SurnameS;
+        is >> obj.numberOfGroop;
+        return is;
+    }
+	  Student& operator=(const Student& p) {
+        if (this == &p) {
+			return *this; }
+       
+        this->Set_numberOfGroop(p.Get_numberOfGroop());
+        this->Set_SurnameS(p.Get_SurnameS());
+        return *this;
+    }
+
+	string Get_SurnameS() const {
+        return SurnameS;
+    }
+	string Get_numberOfGroop() const {
+        return numberOfGroop;
+    }
+	 void Set_SurnameS(string SurnameS) {
+        this->SurnameS = SurnameS;
+    }
+	  void Set_numberOfGroop(string numberOfGroop) {
+        this->numberOfGroop = numberOfGroop;
+    }
+	  	virtual void NAME(){
+	cout<<this->Get_SurnameS()<<endl;
+	}
+	~Student();
+
+};
+
+
+Student::~Student(){
+
+cout<<"Destruktor Student has been worked"<<endl;
+
+}
+
+
+
+
+class Lecturer {
+                          
+public:
+	string position; 
+	string SurnameL;
+	Lecturer(){};
+	 virtual void info() {
+        cout << Get_SurnameL() << endl;
+    }
+
+    Lecturer& operator=(const Lecturer& p) {
+       
+        if (this == &p)
+            return *this; 
+        this->SurnameL = SurnameL;
+        this->position = position;
+        return *this;
+    }
+
+    friend std::ostream& operator<<(std::ostream& os, const Lecturer& obj) {
+        os << obj.Get_SurnameL() << " - " << obj.Get_Position() << endl;
+        return os;
+    }
+
+    friend std::istream& operator>>(std::istream& is, Lecturer& obj) {
+        is >> obj.SurnameL;
+        is >> obj.position;
+        return is;
+    }
+
+    Lecturer(string SurnameL, string position) :
+   SurnameL(SurnameL), position(position) {
+        this->SurnameL = SurnameL;
+
+        this->position = position;
+    }
+    string Get_SurnameL() const {
+        return SurnameL;
+    }
+
+    void Set_LastName(string SurnameL) {
+        this->SurnameL = SurnameL;
+    }
+
+    string Get_Position() const {
+        return position;
+    }
+
+    void Set_Position(string position) {
+        this->position = position;
+    }
+
+    void operator()(string position) {
+        this->position = position;
+    }
+	~Lecturer();
+};
+ 
+
+
+Lecturer::~Lecturer(){
+
+cout<<"Destruktor Lecturer has been worked"<<endl;
+
+}
+
+
+class Exam : public Student, public Lecturer{
+    string name;
+	string time;
+    string date;
+    string score;
+public:
+
+    Exam() {
+    }
+
+    Exam(string name, string time, string date,  string score) :
+    Student(), date(date), name(name), score(score),  time(time) {
+        this->name = name;
+		this->time = time;
+        this->date = date;
+        this->score = score;
+
+    }
+
+    string get_Date() const {
+        return date;
+    }
+
+    void set_Date(string date) {
+        this->date = date;
+    }
+
+    string get_Score() const {
+        return score;
+    }
+
+    void set_Score(string score) {
+        this->score = score;
+    }
+
+    
+    string get_Time() const {
+        return time;
+    }
+
+    void set_Time(string time) {
+        this->time = time;
+    }
+
+    string get_Name() const {
+        return name;
+    }
+
+    void set_Name(string name) {
+        this->name = name;
+    }
+
+    virtual void info() {
+        cout << get_Name() << endl;
+    }
+
+    friend std::ostream& operator<<(std::ostream& os, const Exam& obj) {
+        os << obj.name << " : "  << " : " << obj.date << " : "
+                << obj.time << " : " << obj.score << endl;
+        return os;
+    }
+
+    Exam& operator=(const Exam& p) {
+        if (this == &p) {
+			return *this; }
+        this->name = p.get_Name();
+        this->date = p.get_Date();
+        this->time = p.get_Time();
+        this->score = p.get_Score();
+        return *this;
+    }
+
+};
+
+class classifiction_book {
+    Exam *arr;
+    int size;
+    int capacity;
+    int N;
+    void ensureCapacity() {
+        if (size == capacity - 1) {
+            Exam *tmp = new Exam[capacity];
+            for (int i = 0; i < size; i++) {
+                tmp[i] = arr[i];
+            }
+            delete arr;
+            capacity = capacity * 3 / 2 + 2;
+            arr = new Exam[capacity];
+
+            for (int i = 0; i < size; i++) {
+                arr[i] = tmp[i];
+            }
+            delete tmp;
+
+        }
+    }
+public:
+
+    classifiction_book() {
+        capacity = 5;
+        size = 0;
+        arr = new Exam[capacity];
+    }
+
+    void add(Exam l) {
+        ensureCapacity();
+        arr[size] = l;
+        size++;
+    }
+
+ 
+
+    friend std::ostream& operator<<(std::ostream& os, const classifiction_book& obj) {
+        for (int i = 0; i < obj.size; i++) {
+            os << obj.arr[i];
+
+        }
+
+        return os;
+    }
+	class Iterator {
+        Exam* t;
+    public:
+
+        Iterator(Exam* first) : t(first) {
+        }
+
+        Exam& operator+(int n) {
+            return *(t + n);
+        }
+
+        Exam& operator-(int n) {
+            return *(t - n);
+        }
+
+        Exam& operator++(int) {
+            return *t++;
+        }
+
+        Exam& operator--(int) {
+            return *t--;
+        }
+
+        Exam& operator++() {
+            return *++t;
+        }
+
+        Exam& operator--() {
+            return *--t;
+        }
+
+        bool operator!=(const Iterator& it) {
+            return t != it.t;
+        }
+
+        bool operator==(const Iterator& it) {
+            return t == it.t;
+        }
+
+        Exam& operator*() {
+            return *t;
+        }
+
+        friend std::ostream& operator<<(std::ostream& os, const Iterator& obj) {
+            os << obj.t << endl;
+            return os;
+        }
+
+    };
+
+};
+
+
+void Test_For_Student_Class() {
+    Student *k = new Student( "SA-22", "Malenchak_Valentyn");
+    Student *p = k;
+	cout << *p;
+    cout << *k;
+    cin>>*p;  
+    cout << *p;
+
+}
+void iteratorTest() {
+    classifiction_book arr[3];
+
+    Exam *l1 = new Exam("Math", "20.05.2016", "8:30", "NU LP");
+    Exam *l2 = new Exam("OOP",  "21.05.2016", "8:30", "NU LP");
+    Exam *l3 = new Exam("Programming", "22.05.2016", "8:30", "NU LP");
+
+
+    arr[0] = *l1;
+    arr[1] = *l2;
+    arr[2] = *l3;
+
+
+    classifiction_book::Iterator it = classifiction_book::Iterator(arr.begin());
+
+    cout << "2: " << it + 2 << endl;
+
+    while (it != arr.end()) {
+        cout << *it;
+        it++;
+    }
+}
